@@ -32,7 +32,6 @@
     "lint:fix": "eslint --fix ./src",
     "precommit": "lint-staged",
     "prepublish": "npm run build",
-    "prebuild": "rimraf dist",
     "start": "node webpack/server.js",
     "start:debug": "weinre --boundHost `my-local-ip` ",
     "test": "jest --coverage"

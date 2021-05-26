@@ -158,7 +158,6 @@ node_modules
 
 lib/
 build/
-dist/
 
 ### Windows template
 # Windows image file caches
