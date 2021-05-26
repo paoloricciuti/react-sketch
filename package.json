@@ -1,6 +1,6 @@
 {
-  "name": "react-sketch2",
-  "version": "0.5.7",
+  "name": "react-sketch-pablo",
+  "version": "0.5.8",
   "description": "Sketch Element for React based applications, backed-up by fabricjs as its core",
   "keywords": [
     "react",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/x5engine/react-sketch.git"
+    "url": "git+https://github.com/paoloricciuti/react-sketch.git"
   },
   "bugs": {
     "url": "https://github.com/x5engine/react-sketch/issues"

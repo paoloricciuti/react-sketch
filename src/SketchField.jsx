@@ -1,9 +1,9 @@
 /*eslint no-unused-vars: 0*/
 
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import History from './history';
-import {uuid4} from './utils';
+import { uuid4 } from './utils';
 import Select from './select';
 import Pencil from './pencil';
 import Line from './line';
@@ -93,16 +93,16 @@ class SketchField extends PureComponent {
     widthCorrection: 0,
     heightCorrection: 0,
     forceValue: false,
-    onObjectAdded:()=>null,
-    onObjectModified:()=>null,
-    onObjectRemoved:()=>null,
-    onMouseDown:()=>null,
-    onMouseMove:()=>null,
-    onMouseUp:()=>null,
-    onMouseOut:()=>null,
-    onObjectMoving:()=>null,
-    onObjectScaling:()=>null,
-    onObjectRotating:()=>null,
+    onObjectAdded: () => null,
+    onObjectModified: () => null,
+    onObjectRemoved: () => null,
+    onMouseDown: () => null,
+    onMouseMove: () => null,
+    onMouseUp: () => null,
+    onMouseOut: () => null,
+    onObjectMoving: () => null,
+    onObjectScaling: () => null,
+    onObjectRotating: () => null,
   };
 
   state = {
@@ -175,7 +175,7 @@ class SketchField extends PureComponent {
    * Action when an object is added to the canvas
    */
   _onObjectAdded = (e) => {
-    const {onObjectAdded} = this.props;
+    const { onObjectAdded } = this.props;
     if (!this.state.action) {
       this.setState({ action: true });
       return
@@ -195,7 +195,7 @@ class SketchField extends PureComponent {
    * Action when an object is moving around inside the canvas
    */
   _onObjectMoving = (e) => {
-    const {onObjectMoving} = this.props;
+    const { onObjectMoving } = this.props;
     onObjectMoving(e);
   };
 
@@ -203,7 +203,7 @@ class SketchField extends PureComponent {
    * Action when an object is scaling inside the canvas
    */
   _onObjectScaling = (e) => {
-    const {onObjectScaling} = this.props;
+    const { onObjectScaling } = this.props;
     onObjectScaling(e);
   };
 
@@ -211,12 +211,12 @@ class SketchField extends PureComponent {
    * Action when an object is rotating inside the canvas
    */
   _onObjectRotating = (e) => {
-    const {onObjectRotating} = this.props;
+    const { onObjectRotating } = this.props;
     onObjectRotating(e);
   };
 
   _onObjectModified = (e) => {
-    const {onObjectModified} = this.props;
+    const { onObjectModified } = this.props;
     let obj = e.target;
     obj.__version += 1;
     let prevState = JSON.stringify(obj.__originalState);
@@ -232,7 +232,7 @@ class SketchField extends PureComponent {
    * Action when an object is removed from the canvas
    */
   _onObjectRemoved = (e) => {
-    const {onObjectRemoved} = this.props;
+    const { onObjectRemoved } = this.props;
     let obj = e.target;
     if (obj.__removed) {
       obj.__version += 1;
@@ -246,7 +246,7 @@ class SketchField extends PureComponent {
    * Action when the mouse button is pressed down
    */
   _onMouseDown = (e) => {
-    const{onMouseDown} = this.props;
+    const { onMouseDown } = this.props;
     this._selectedTool.doMouseDown(e);
     onMouseDown(e);
   };
@@ -255,7 +255,7 @@ class SketchField extends PureComponent {
    * Action when the mouse cursor is moving around within the canvas
    */
   _onMouseMove = (e) => {
-    const {onMouseMove} = this.props;
+    const { onMouseMove } = this.props;
     this._selectedTool.doMouseMove(e);
     onMouseMove(e);
   };
@@ -264,7 +264,7 @@ class SketchField extends PureComponent {
    * Action when the mouse cursor is moving out from the canvas
    */
   _onMouseOut = (e) => {
-    const {onMouseOut} = this.props;
+    const { onMouseOut } = this.props;
     this._selectedTool.doMouseOut(e);
     if (this.props.onChange) {
       let onChange = this.props.onChange;
@@ -276,7 +276,7 @@ class SketchField extends PureComponent {
   };
 
   _onMouseUp = (e) => {
-    const {onMouseUp} = this.props;
+    const { onMouseUp } = this.props;
     this._selectedTool.doMouseUp(e);
     // Update the final state to new-generated object
     // Ignore Path object since it would be created after mouseUp
@@ -488,7 +488,7 @@ class SketchField extends PureComponent {
     let canvas = this._fc;
     setTimeout(() => {
       canvas.loadFromJSON(json, () => {
-        if(this.props.tool === Tool.DefaultTool){
+        if (this.props.tool === Tool.DefaultTool) {
           canvas.isDrawingMode = canvas.selection = false;
           canvas.forEachObject((o) => o.selectable = o.evented = false);
         }
@@ -621,7 +621,7 @@ class SketchField extends PureComponent {
   };
 
   callEvent = (e, eventFunction) => {
-    if(this._selectedTool)
+    if (this._selectedTool)
       eventFunction(e);
   }
 
@@ -646,7 +646,7 @@ class SketchField extends PureComponent {
     this._backgroundColor(backgroundColor)
 
     let selectedTool = this._tools[tool];
-    if(selectedTool)
+    if (selectedTool)
       selectedTool.configureCanvas(this.props);
     this._selectedTool = selectedTool;
 
@@ -662,7 +662,7 @@ class SketchField extends PureComponent {
     canvas.on('object:removed', e => this.callEvent(e, this._onObjectRemoved));
     canvas.on('mouse:down', e => this.callEvent(e, this._onMouseDown));
     canvas.on('mouse:move', e => this.callEvent(e, this._onMouseMove));
-    canvas.on('mouse:up', e =>  this.callEvent(e, this._onMouseUp));
+    canvas.on('mouse:up', e => this.callEvent(e, this._onMouseUp));
     canvas.on('mouse:out', e => this.callEvent(e, this._onMouseOut));
     canvas.on('object:moving', e => this.callEvent(e, this._onObjectMoving));
     canvas.on('object:scaling', e => this.callEvent(e, this._onObjectScaling));
@@ -696,13 +696,13 @@ class SketchField extends PureComponent {
       this._selectedTool = this._tools[this.props.tool];
       //Bring the cursor back to default if it is changed by a tool
       this._fc.defaultCursor = 'default';
-      if(this._selectedTool){
+      if (this._selectedTool) {
         this._selectedTool.configureCanvas(this.props);
       }
     }
 
-    if (this.props.lineWidth !== prevProps.this.props.lineWidth !== prevProps.lineWidth || lineColor || this.props.fillColor !== prevProps.fillColor) {
-      if(this._selectedTool){
+    if (this.props.lineWidth !== prevProps.lineWidth || this.props.lineColor !== prevProps.lineColor || this.props.fillColor !== prevProps.fillColor) {
+      if (this._selectedTool) {
         this._selectedTool.configureCanvas(this.props);
       }
     }
