@@ -7,19 +7,15 @@
 
 A Sketch tool for React based applications, backed-up by [FabricJS](http://fabricjs.com/)
 
+This tool is based on react-sketch and react-sketch2. I've modified it to fix some bugs.
+
 ![idea-image] _Please note that this module is still in development! Feel free to send me enhancements and ideas :)_
 
 
 ## Installation
 
 ```sh
-npm install react-sketch --save
-```
-
-or with yarn
-
-```sh
-yarn add react-sketch
+npm install react-sketch-3.0 --save
 ```
 
 ### Source installation
@@ -80,7 +76,7 @@ Available tools
 | Pan               | Disables drawing and gives you the ability to move the complete canvas at will, useful to adjust the canvas when zooming in or out (thank you [wmaillard](https://github.com/wmaillard)) |
 
 
-## Examples
+## Examples from tbolis project
 
 The project includes a webpack server for running the examples, just run:
 

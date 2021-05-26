@@ -691,7 +691,9 @@ class SketchField extends PureComponent {
 
       this._resize()
     }
-
+    //added skip target find to avoid selecting object with tools different than
+    //the select tool
+    this._fc.skipTargetFind = this.props.tool !== Tool.Select;
     if (this.props.tool !== prevProps.tool) {
       this._selectedTool = this._tools[this.props.tool];
       //Bring the cursor back to default if it is changed by a tool

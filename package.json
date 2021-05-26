@@ -1,6 +1,6 @@
 {
-  "name": "react-sketch-pablo",
-  "version": "0.5.9",
+  "name": "react-sketch-3.0",
+  "version": "0.6.6",
   "description": "Sketch Element for React based applications, backed-up by fabricjs as its core",
   "keywords": [
     "react",
@@ -10,15 +10,15 @@
     "fabric.js"
   ],
   "author": {
-    "name": "X5Engine",
-    "email": "Contact@x5engine.com"
+    "name": "Paolo Ricciuti",
+    "email": "ricciutipaolo@gmail.com"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paoloricciuti/react-sketch.git"
   },
   "bugs": {
-    "url": "https://github.com/x5engine/react-sketch/issues"
+    "url": "https://github.com/paoloricciuti/react-sketch/issues"
   },
   "license": "MIT",
   "main": "./dist",
