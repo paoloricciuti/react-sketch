@@ -11,6 +11,8 @@ class Select extends FabricCanvasTool {
     canvas.forEachObject((o) => {
       o.selectable = o.evented = true;
     });
+    canvas.defaultCursor = 'default';
+    canvas.hoverCursor = 'move';
   }
 }
 

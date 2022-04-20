@@ -8,4 +8,5 @@ export default {
   Select: 'select',
   Pan: 'pan',
   DefaultTool: 'default-tool',
+  Fill: 'fill',
 }

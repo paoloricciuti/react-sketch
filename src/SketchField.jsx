@@ -14,8 +14,11 @@ import Pan from './pan';
 import Tool from './tools';
 import RectangleLabel from './rectangle-label';
 import DefaultTool from './defaul-tool';
+import Genograms from './genograms'
+import Fill from './fill';
 
 const fabric = require('fabric').fabric;
+require("./patch");
 
 /**
  * Sketch Tool based on FabricJS for React Applications
@@ -93,6 +96,7 @@ class SketchField extends PureComponent {
     widthCorrection: 0,
     heightCorrection: 0,
     forceValue: false,
+    grid: 30,
     onObjectAdded: () => null,
     onObjectModified: () => null,
     onObjectRemoved: () => null,
@@ -107,8 +111,10 @@ class SketchField extends PureComponent {
 
   state = {
     parentWidth: 550,
-    action: true
+    action: true,
+    isSelecting: false,
   };
+
   _initTools = (fabricCanvas) => {
     this._tools = {};
     this._tools[Tool.Select] = new Select(fabricCanvas);
@@ -120,6 +126,7 @@ class SketchField extends PureComponent {
     this._tools[Tool.Circle] = new Circle(fabricCanvas);
     this._tools[Tool.Pan] = new Pan(fabricCanvas);
     this._tools[Tool.DefaultTool] = new DefaultTool(fabricCanvas);
+    this._tools[Tool.Fill] = new Fill(fabricCanvas);
   };
 
   /**
@@ -156,9 +163,10 @@ class SketchField extends PureComponent {
   addImg = (dataUrl, options = {}) => {
     let canvas = this._fc;
     fabric.Image.fromURL(dataUrl, (oImg) => {
+      const [_, __, ___, ____, offsetX, offsetY] = canvas.viewportTransform;
       let opts = {
-        left: Math.random() * (canvas.getWidth() - oImg.width * 0.5),
-        top: Math.random() * (canvas.getHeight() - oImg.height * 0.5),
+        left: -offsetX + (canvas.getWidth() - oImg.width * 0.5) * 0.5,
+        top: -offsetY + (canvas.getHeight() - oImg.height * 0.5) * 0.5,
         scale: 0.5
       };
       Object.assign(opts, options);
@@ -275,6 +283,56 @@ class SketchField extends PureComponent {
     onMouseOut(e);
   };
 
+  /**
+   * Action when the editing of the text end
+   */
+  _onTextEditingExit = (e) => {
+    const { onTextEditingExit } = this.props;
+    if (this.props.onChange) {
+      let onChange = this.props.onChange;
+      setTimeout(() => {
+        onChange(e.e)
+      }, 10)
+    }
+    if (onTextEditingExit) {
+      onTextEditingExit(e);
+    }
+  };
+
+  /**
+   * Action when the editing of the text start
+   */
+  _onTextEditingEntered = (e) => {
+    const { onTextEditingEntered } = this.props;
+    if (this.props.onChange) {
+      let onChange = this.props.onChange;
+      setTimeout(() => {
+        onChange(e.e)
+      }, 10)
+    }
+    if (onTextEditingEntered) {
+      onTextEditingEntered(e);
+    }
+  };
+
+
+
+  /**
+   * Action when the text change
+   */
+  _onTextChanged = (e) => {
+    const { onTextChanged } = this.props;
+    if (this.props.onChange) {
+      let onChange = this.props.onChange;
+      setTimeout(() => {
+        onChange(e.e)
+      }, 10)
+    }
+    if (onTextChanged) {
+      onTextChanged(e);
+    }
+  };
+
   _onMouseUp = (e) => {
     const { onMouseUp } = this.props;
     this._selectedTool.doMouseUp(e);
@@ -295,6 +353,7 @@ class SketchField extends PureComponent {
         onChange(e.e)
       }, 10)
     }
+    e.isSelecting = this.state.isSelecting;
     onMouseUp(e);
   };
 
@@ -607,18 +666,64 @@ class SketchField extends PureComponent {
   addText = (text, options = {}) => {
     let canvas = this._fc;
     let iText = new fabric.IText(text, options);
+    const [_, __, ___, ____, offsetX, offsetY] = canvas.viewportTransform;
     let opts = {
-      left: (canvas.getWidth() - iText.width) * 0.5,
-      top: (canvas.getHeight() - iText.height) * 0.5,
+      left: -offsetX + (canvas.getWidth() - iText.width) * 0.5,
+      top: -offsetY + (canvas.getHeight() - iText.height) * 0.5,
     };
     Object.assign(options, opts);
     iText.set({
       'left': options.left,
-      'top': options.top
+      'top': options.top,
+      'fill': this.props && this.props.lineColor ? this.props.lineColor : "black",
     });
-
     canvas.add(iText);
+    canvas.setActiveObject(iText);
+    iText.enterEditing();
+    iText.selectAll();
+    iText.hiddenTextarea.focus();
   };
+  //(w, h, offsetX, offsetY, grid, props)
+  addGenogram = (genogram = "uomo", grid) => {
+    if (Genograms.hasOwnProperty(genogram)) {
+      const canvas = this._fc;
+      const [_, __, ___, ____, offsetX, offsetY] = canvas.viewportTransform;
+      const toAdd = Genograms[genogram](canvas.getWidth(), canvas.getHeight(), offsetX, offsetY, grid, this.props);
+      for (let group of [].concat(toAdd)) {
+        canvas.add(group);
+      }
+    }
+  }
+
+  setStroke = (color) => {
+    const canvas = this._fc;
+    const activeObj = canvas.getActiveObject();
+    const setObjStroke = (activeObj) => {
+      if (activeObj) {
+        let toLoop = activeObj._objects;
+        if (!toLoop) {
+          toLoop = [activeObj];
+        }
+        const toSkip = activeObj.skipStroke;
+        for (let i = 0; i < toLoop.length; i += 1) {
+          let obj = toLoop[i];
+          if (!(toSkip && toSkip[i])) {
+            obj.stroke = color;
+          }
+        }
+      }
+    }
+    if (activeObj) {
+      let toLoop = activeObj._objects;
+      if (!toLoop) {
+        toLoop = [activeObj];
+      }
+      for (let i = 0; i < toLoop.length; i += 1) {
+        setObjStroke(toLoop[i]);
+      }
+      canvas.renderAll();
+    }
+  }
 
   callEvent = (e, eventFunction) => {
     if (this._selectedTool)
@@ -664,14 +769,26 @@ class SketchField extends PureComponent {
     canvas.on('mouse:move', e => this.callEvent(e, this._onMouseMove));
     canvas.on('mouse:up', e => this.callEvent(e, this._onMouseUp));
     canvas.on('mouse:out', e => this.callEvent(e, this._onMouseOut));
-    canvas.on('object:moving', e => this.callEvent(e, this._onObjectMoving));
+    canvas.on('object:moving', e => {
+      if (e.target.isGenogram) {
+        const steps = e.target.grid;
+        e.target.set({
+          left: Math.round(e.target.left / steps) * steps,
+          top: Math.round(e.target.top / steps) * steps
+        });
+      }
+      this.callEvent(e, this._onObjectMoving)
+    });
     canvas.on('object:scaling', e => this.callEvent(e, this._onObjectScaling));
     canvas.on('object:rotating', e => this.callEvent(e, this._onObjectRotating));
+    canvas.on('selection:created', e => this.setState({ isSelecting: true }));
+    canvas.on('selection:cleared', e => this.setState({ isSelecting: false }));
+    canvas.on("text:editing:entered", e => this.callEvent(e, this._onTextEditingEntered))
+    canvas.on("text:editing:exited", e => this.callEvent(e, this._onTextEditingExit));
+    canvas.on("text:changed", e => this.callEvent(e, this._onTextChanged));
     // IText Events fired on Adding Text
     // canvas.on("text:event:changed", console.log)
     // canvas.on("text:selection:changed", console.log)
-    // canvas.on("text:editing:entered", console.log)
-    // canvas.on("text:editing:exited", console.log)
 
     this.disableTouchScroll();
 
@@ -689,11 +806,11 @@ class SketchField extends PureComponent {
       || this.props.width !== prevProps.width
       || this.props.height !== prevProps.height) {
 
-      this._resize()
+      //this._resize()
     }
     //added skip target find to avoid selecting object with tools different than
     //the select tool
-    this._fc.skipTargetFind = this.props.tool !== Tool.Select;
+    this._fc.skipTargetFind = this.props.tool !== Tool.Select && this.props.tool !== Tool.Fill;
     if (this.props.tool !== prevProps.tool) {
       this._selectedTool = this._tools[this.props.tool];
       //Bring the cursor back to default if it is changed by a tool
