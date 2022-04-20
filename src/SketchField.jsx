@@ -14,7 +14,7 @@ import Pan from './pan';
 import Tool from './tools';
 import RectangleLabel from './rectangle-label';
 import DefaultTool from './defaul-tool';
-import Genograms from './genograms'
+import Genograms from './genograms';
 import Fill from './fill';
 
 const fabric = require('fabric').fabric;
@@ -135,7 +135,7 @@ class SketchField extends PureComponent {
   enableTouchScroll = () => {
     let canvas = this._fc;
     if (canvas.allowTouchScrolling) return;
-    canvas.allowTouchScrolling = true
+    canvas.allowTouchScrolling = true;
   };
 
   /**
@@ -144,7 +144,7 @@ class SketchField extends PureComponent {
   disableTouchScroll = () => {
     let canvas = this._fc;
     if (canvas.allowTouchScrolling) {
-      canvas.allowTouchScrolling = false
+      canvas.allowTouchScrolling = false;
     }
   };
 
@@ -186,7 +186,7 @@ class SketchField extends PureComponent {
     const { onObjectAdded } = this.props;
     if (!this.state.action) {
       this.setState({ action: true });
-      return
+      return;
     }
     let obj = e.target;
     obj.__version = 1;
@@ -195,7 +195,7 @@ class SketchField extends PureComponent {
     obj.__originalState = objState;
     let state = JSON.stringify(objState);
     // object, previous state, current state
-    this._history.keep([obj, state, state])
+    this._history.keep([obj, state, state]);
     onObjectAdded(e);
   };
 
@@ -244,7 +244,7 @@ class SketchField extends PureComponent {
     let obj = e.target;
     if (obj.__removed) {
       obj.__version += 1;
-      return
+      return;
     }
     obj.__version = 0;
     onObjectRemoved(e);
@@ -277,8 +277,8 @@ class SketchField extends PureComponent {
     if (this.props.onChange) {
       let onChange = this.props.onChange;
       setTimeout(() => {
-        onChange(e.e)
-      }, 10)
+        onChange(e.e);
+      }, 10);
     }
     onMouseOut(e);
   };
@@ -291,8 +291,8 @@ class SketchField extends PureComponent {
     if (this.props.onChange) {
       let onChange = this.props.onChange;
       setTimeout(() => {
-        onChange(e.e)
-      }, 10)
+        onChange(e.e);
+      }, 10);
     }
     if (onTextEditingExit) {
       onTextEditingExit(e);
@@ -307,8 +307,8 @@ class SketchField extends PureComponent {
     if (this.props.onChange) {
       let onChange = this.props.onChange;
       setTimeout(() => {
-        onChange(e.e)
-      }, 10)
+        onChange(e.e);
+      }, 10);
     }
     if (onTextEditingEntered) {
       onTextEditingEntered(e);
@@ -325,8 +325,8 @@ class SketchField extends PureComponent {
     if (this.props.onChange) {
       let onChange = this.props.onChange;
       setTimeout(() => {
-        onChange(e.e)
-      }, 10)
+        onChange(e.e);
+      }, 10);
     }
     if (onTextChanged) {
       onTextChanged(e);
@@ -350,8 +350,8 @@ class SketchField extends PureComponent {
     if (this.props.onChange) {
       let onChange = this.props.onChange;
       setTimeout(() => {
-        onChange(e.e)
-      }, 10)
+        onChange(e.e);
+      }, 10);
     }
     e.isSelecting = this.state.isSelecting;
     onMouseUp(e);
@@ -378,7 +378,7 @@ class SketchField extends PureComponent {
       // Need to scale background images as well
       let bi = canvas.backgroundImage;
       bi.width = bi.width * wfactor;
-      bi.height = bi.height * hfactor
+      bi.height = bi.height * hfactor;
     }
     let objects = canvas.getObjects();
     for (let i in objects) {
@@ -395,7 +395,7 @@ class SketchField extends PureComponent {
       obj.scaleY = tempScaleY;
       obj.left = tempLeft;
       obj.top = tempTop;
-      obj.setCoords()
+      obj.setCoords();
     }
     this.setState({
       parentWidth: offsetWidth
@@ -411,7 +411,7 @@ class SketchField extends PureComponent {
   _backgroundColor = (color) => {
     if (!color) return;
     let canvas = this._fc;
-    canvas.setBackgroundColor(color, () => canvas.renderAll())
+    canvas.setBackgroundColor(color, () => canvas.renderAll());
   };
 
   /**
@@ -424,16 +424,7 @@ class SketchField extends PureComponent {
    */
   zoom = (factor) => {
     let canvas = this._fc;
-    let objects = canvas.getObjects();
-    for (let i in objects) {
-      objects[i].scaleX = objects[i].scaleX * factor;
-      objects[i].scaleY = objects[i].scaleY * factor;
-      objects[i].left = objects[i].left * factor;
-      objects[i].top = objects[i].top * factor;
-      objects[i].setCoords();
-    }
-    canvas.renderAll();
-    canvas.calcOffset();
+    if (canvas) canvas.setZoom(canvas.getZoom() * factor);
   };
 
   /**
@@ -455,10 +446,10 @@ class SketchField extends PureComponent {
       obj.__version -= 1;
       obj.setOptions(JSON.parse(prevState));
       obj.setCoords();
-      this._fc.renderAll()
+      this._fc.renderAll();
     }
     if (this.props.onChange) {
-      this.props.onChange()
+      this.props.onChange();
     }
   };
 
@@ -474,16 +465,16 @@ class SketchField extends PureComponent {
       if (obj.__version === 0) {
         this.setState({ action: false }, () => {
           canvas.add(obj);
-          obj.__version = 1
-        })
+          obj.__version = 1;
+        });
       } else {
         obj.__version += 1;
-        obj.setOptions(JSON.parse(currState))
+        obj.setOptions(JSON.parse(currState));
       }
       obj.setCoords();
       canvas.renderAll();
       if (this.props.onChange) {
-        this.props.onChange()
+        this.props.onChange();
       }
     }
   };
@@ -494,7 +485,7 @@ class SketchField extends PureComponent {
    * @returns {*} true if we can undo otherwise false
    */
   canUndo = () => {
-    return this._history.canUndo()
+    return this._history.canUndo();
   };
 
   /**
@@ -503,7 +494,7 @@ class SketchField extends PureComponent {
    * @returns {*} true if we can redo otherwise false
    */
   canRedo = () => {
-    return this._history.canRedo()
+    return this._history.canRedo();
   };
 
   /**
@@ -553,10 +544,10 @@ class SketchField extends PureComponent {
         }
         canvas.renderAll();
         if (this.props.onChange) {
-          this.props.onChange()
+          this.props.onChange();
         }
-      })
-    }, 100)
+      });
+    }, 100);
   };
 
   /**
@@ -570,7 +561,7 @@ class SketchField extends PureComponent {
     let discarded = this.toJSON(propertiesToInclude);
     this._fc.clear();
     this._history.clear();
-    return discarded
+    return discarded;
   };
 
   /**
@@ -584,7 +575,7 @@ class SketchField extends PureComponent {
       if (activeObj.type === 'activeSelection') {
         activeObj.forEachObject(obj => selected.push(obj));
       } else {
-        selected.push(activeObj)
+        selected.push(activeObj);
       }
       selected.forEach(obj => {
         obj.__removed = true;
@@ -642,25 +633,25 @@ class SketchField extends PureComponent {
       Object.assign(options, {
         width: canvas.width,
         height: canvas.height
-      })
+      });
     }
     if (options.stretchedX) {
       delete options.stretchedX;
       Object.assign(options, {
         width: canvas.width
-      })
+      });
     }
     if (options.stretchedY) {
       delete options.stretchedY;
       Object.assign(options, {
         height: canvas.height
-      })
+      });
     }
     let img = new Image();
     img.setAttribute('crossOrigin', 'anonymous');
     img.onload = () => canvas.setBackgroundImage(new fabric.Image(img),
       () => canvas.renderAll(), options);
-    img.src = dataUrl
+    img.src = dataUrl;
   };
 
   addText = (text, options = {}) => {
@@ -693,7 +684,7 @@ class SketchField extends PureComponent {
         canvas.add(group);
       }
     }
-  }
+  };
 
   setStroke = (color) => {
     const canvas = this._fc;
@@ -712,7 +703,7 @@ class SketchField extends PureComponent {
           }
         }
       }
-    }
+    };
     if (activeObj) {
       let toLoop = activeObj._objects;
       if (!toLoop) {
@@ -723,12 +714,12 @@ class SketchField extends PureComponent {
       }
       canvas.renderAll();
     }
-  }
+  };
 
   callEvent = (e, eventFunction) => {
     if (this._selectedTool)
       eventFunction(e);
-  }
+  };
 
   componentDidMount = () => {
     let {
@@ -748,7 +739,7 @@ class SketchField extends PureComponent {
     this._initTools(canvas);
 
     // set initial backgroundColor
-    this._backgroundColor(backgroundColor)
+    this._backgroundColor(backgroundColor);
 
     let selectedTool = this._tools[tool];
     if (selectedTool)
@@ -777,13 +768,13 @@ class SketchField extends PureComponent {
           top: Math.round(e.target.top / steps) * steps
         });
       }
-      this.callEvent(e, this._onObjectMoving)
+      this.callEvent(e, this._onObjectMoving);
     });
     canvas.on('object:scaling', e => this.callEvent(e, this._onObjectScaling));
     canvas.on('object:rotating', e => this.callEvent(e, this._onObjectRotating));
     canvas.on('selection:created', e => this.setState({ isSelecting: true }));
     canvas.on('selection:cleared', e => this.setState({ isSelecting: false }));
-    canvas.on("text:editing:entered", e => this.callEvent(e, this._onTextEditingEntered))
+    canvas.on("text:editing:entered", e => this.callEvent(e, this._onTextEditingEntered));
     canvas.on("text:editing:exited", e => this.callEvent(e, this._onTextEditingExit));
     canvas.on("text:changed", e => this.callEvent(e, this._onTextChanged));
     // IText Events fired on Adding Text
@@ -827,7 +818,7 @@ class SketchField extends PureComponent {
     }
 
     if (this.props.backgroundColor !== prevProps.backgroundColor) {
-      this._backgroundColor(this.props.backgroundColor)
+      this._backgroundColor(this.props.backgroundColor);
     }
 
     if ((this.props.value !== prevProps.value) || (this.props.value && this.props.forceValue)) {
@@ -858,8 +849,8 @@ class SketchField extends PureComponent {
           :(
         </canvas>
       </div>
-    )
-  }
+    );
+  };
 }
 
-export default SketchField
+export default SketchField;
