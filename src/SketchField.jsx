@@ -424,7 +424,12 @@ class SketchField extends PureComponent {
    */
   zoom = (factor) => {
     let canvas = this._fc;
-    if (canvas) canvas.setZoom(canvas.getZoom() * factor);
+    if (canvas) {
+      const newZoom = canvas.getZoom() * factor;
+      if (newZoom > 0.1) {
+        canvas.setZoom(newZoom);
+      }
+    };
   };
 
   /**
